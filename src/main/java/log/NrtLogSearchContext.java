@@ -26,21 +26,24 @@ public class NrtLogSearchContext extends LuceneContextBase {
 
     @Override
     public void start() {
-        if (writer == null) {
+        if (!isStarted()) {
             synchronized (initLock) {
-                try {
-                    if (writer == null) {
-                        writer = writerFactory.openWriter(indexUri, writerConfig);
+                if(!isStarted()) {
+                    try {
+                        if (writer == null) {
+                            writer = writerFactory.openWriter(indexUri, writerConfig);
+                        }
+                        manager = new SearcherManager(writer, null);
+                    } catch (IOException e) {
+                        //todo
+                        return;
                     }
-                    manager = new SearcherManager(writer, null);
-                } catch (IOException e) {
-                    //todo
-                    return;
                 }
             }
         }
         super.start();
     }
+
 
     @Override
     public void stop(){

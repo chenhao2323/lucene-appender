@@ -7,10 +7,11 @@
 
     <appender name="lucene" class="log.ClassicLuceneAppder">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss:SSS , GMT+8} [%-5level] [%-5thread] [%logger{20}:%line] - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss:SSS , GMT+8} [%-5level] [%-5thread] [%X{req.requestURI}] [%logger{20}:%line] - %msg</pattern>
             <charset>UTF-8</charset>
         </encoder>
-        <uri>D:\document\lucene\logIndex</uri>
+        <filter class="test.LogSearchFilter" />
+        <uri>D:\docment\lucene\logIndex</uri>
     </appender>
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
@@ -27,12 +28,9 @@
     <appender name="debug" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${logdir}/${appname}_debug_${port}.log</File>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss:SSS , GMT+8} [%-5level] [%-5thread] [%logger{20}:%line] - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss:SSS , GMT+8} [%-5level] [%-5thread] [%X{req.requestURL}] [%logger{20}:%line] - %msg%n</pattern>
             <charset>UTF-8</charset>
         </encoder>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>debug</level>
-        </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${logdir}/${appname}_debug_${port}.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxHistory>3</maxHistory>
@@ -49,7 +47,7 @@
     <appender name="stdout" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${logdir}/${appname}_stdout_${port}.log</File>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss:SSS , GMT+8} [%-5level] [%-5thread] [%logger{20}:%line] - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss:SSS , GMT+8} [%-5level] [%-5thread] [%X] [%logger{20}:%line] - %msg%n</pattern>
             <charset>UTF-8</charset>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">

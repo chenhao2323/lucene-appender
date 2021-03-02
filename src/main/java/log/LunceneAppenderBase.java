@@ -6,6 +6,7 @@ import lucene.search.SearchFacade;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriterConfig;
 
+import javax.validation.constraints.NotNull;
 import java.util.concurrent.TimeUnit;
 
 public abstract class LunceneAppenderBase<E> extends UnsynchronizedAppenderBase<E> {
@@ -13,10 +14,6 @@ public abstract class LunceneAppenderBase<E> extends UnsynchronizedAppenderBase<
     private String uri;
 
     private LuceneContextBase luceneContext;
-
-    private final IndexWriterConfig writerConfig = new IndexWriterConfig();
-
-
 
     @Override
     protected void append(E eventObject) {
@@ -32,6 +29,8 @@ public abstract class LunceneAppenderBase<E> extends UnsynchronizedAppenderBase<
 
     protected abstract Document buildDocument(E eventObject);
 
+    protected abstract @NotNull IndexWriterConfig buildWriterConfig();
+
     @Override
     public void start() {
         if (uri == null) {
@@ -39,7 +38,7 @@ public abstract class LunceneAppenderBase<E> extends UnsynchronizedAppenderBase<
             return;
         }
         try {
-            luceneContext = new NrtLogSearchContext(uri, writerConfig);
+            luceneContext = new NrtLogSearchContext(uri, buildWriterConfig());
             luceneContext.start();
             SearchFacade.setContext(luceneContext);
             getContext().getScheduledExecutorService().scheduleAtFixedRate(() ->{

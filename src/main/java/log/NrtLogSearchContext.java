@@ -18,7 +18,7 @@ public class NrtLogSearchContext extends LuceneContextBase {
 
     private final WriterFactory writerFactory = new SimpleLocalFileWriterFactory();
 
-    private  static  final Object initLock = new Object();
+    private  static  final Object INIT_LOCK = new Object();
 
     public NrtLogSearchContext(String indexUri, IndexWriterConfig writerConfig) {
         super(indexUri, writerConfig);
@@ -27,7 +27,7 @@ public class NrtLogSearchContext extends LuceneContextBase {
     @Override
     public void start() {
         if (!isStarted()) {
-            synchronized (initLock) {
+            synchronized (INIT_LOCK) {
                 if(!isStarted()) {
                     try {
                         if (writer == null) {
@@ -65,6 +65,7 @@ public class NrtLogSearchContext extends LuceneContextBase {
     @Override
     public IndexSearcher getSearcher() throws IOException {
         ensureInited();
+        manager.maybeRefresh();
         return manager.acquire();
     }
 

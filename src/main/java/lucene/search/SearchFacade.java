@@ -2,26 +2,33 @@ package lucene.search;
 
 import lucene.LuceneContextBase;
 import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.TopDocs;
 
 import java.io.IOException;
 
+/**
+ * @author chenhao
+ */
 public class SearchFacade {
 
-    private static LuceneContextBase context;
+    private SearchFacade(){}
 
-    private SearchAdaper searchAdaper;
+    private static volatile LuceneContextBase context;
 
-    public static void setContext(LuceneContextBase newContext) {
-        context = newContext;
+    private static SearchAdaper searchAdaper = new DefaultLogSearchAdapter();
+
+    public static synchronized void setContext(LuceneContextBase newContext) {
+        if(context == null){
+            context = newContext;
+        }else{
+            throw new IllegalStateException("multiple context set");
+        }
     }
 
-    public TopDocs search(String query, int hitsPerPage, Sort sort) throws IOException {
+    public static SearchResult search(String query, int hitsPerPage, Sort sort) throws IOException {
         if (context == null) {
             throw new IllegalStateException("no context set");
         }
         return searchAdaper.doSearch(context.getSearcher(), query, hitsPerPage,sort);
     }
-
 
 }

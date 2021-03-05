@@ -1,5 +1,7 @@
 package lucene.search;
 
+import org.apache.lucene.search.Query;
+
 import java.util.List;
 
 /**
@@ -15,9 +17,12 @@ public class SearchResult {
 
     private long total;
 
-    public SearchResult(List docs,long total){
+    private Query query;
+
+    public SearchResult(List docs,long total , Query query){
         this.docs = docs;
         this.total = total;
+        this.query = query;
     }
 
     public List getDocs(){
@@ -28,4 +33,11 @@ public class SearchResult {
         return total;
     }
 
+    public Query getQuery() {
+        return query;
+    }
+
+    public void setQuery(Query query) {
+        this.query = query;
+    }
 }

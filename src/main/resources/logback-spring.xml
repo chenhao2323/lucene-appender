@@ -10,8 +10,10 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss:SSS , GMT+8} [%-5level] [%-5thread] [%X{req.requestURI}] [%logger{20}:%line] - %msg</pattern>
             <charset>UTF-8</charset>
         </encoder>
-        <filter class="test.LogSearchFilter" />
-        <uri>D:\docment\lucene\logIndex</uri>
+        <filter class="lucene.helper.LogSearchFilter" >
+                <url>/znbq/search</url>
+        </filter>
+        <uri>D:\docment\lucene\logIndex1</uri>
     </appender>
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">

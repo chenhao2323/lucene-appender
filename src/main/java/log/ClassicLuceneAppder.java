@@ -11,8 +11,8 @@ import org.apache.lucene.document.*;
 import org.apache.lucene.index.DocValuesType;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriterConfig;
+import lucene.analyzer.TStopAnalyzer;
 
-import javax.validation.constraints.NotNull;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -54,20 +54,21 @@ public class ClassicLuceneAppder extends  LunceneAppenderBase<ILoggingEvent>{
         byte[] bytes = encoder.encode(eventObject);
         String content = charset != null ? new String(bytes,charset) : new String(bytes);
 
-        doc.add(new Field("message",eventObject.getMessage(),DOC_TYPE));
-
+        doc.add(new Field("message",eventObject.getFormattedMessage(),DOC_TYPE));
+        
+        doc.add(new Field("content",content,DOC_TYPE));
         doc.add(new StoredField("content",content));
 
         return doc;
     }
 
     @Override
-    protected @NotNull IndexWriterConfig buildWriterConfig() {
+    protected IndexWriterConfig buildWriterConfig() {
         Analyzer stopAnalyzer;
         try {
             InputStream  in = ClassicLuceneAppder.class.getResourceAsStream("/StopWord.txt");
             Reader stopWords = new InputStreamReader(in);
-            stopAnalyzer = new StopAnalyzer(stopWords);
+            stopAnalyzer = new TStopAnalyzer(stopWords);
         } catch (Exception e) {
             stopAnalyzer = new StopAnalyzer((CharArraySet)null);
         }

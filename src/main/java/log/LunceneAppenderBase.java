@@ -6,7 +6,6 @@ import lucene.search.SearchFacade;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriterConfig;
 
-import javax.validation.constraints.NotNull;
 import java.util.concurrent.TimeUnit;
 
 public abstract class LunceneAppenderBase<E> extends UnsynchronizedAppenderBase<E> {
@@ -29,7 +28,7 @@ public abstract class LunceneAppenderBase<E> extends UnsynchronizedAppenderBase<
 
     protected abstract Document buildDocument(E eventObject);
 
-    protected abstract @NotNull IndexWriterConfig buildWriterConfig();
+    protected abstract IndexWriterConfig buildWriterConfig();
 
     @Override
     public void start() {

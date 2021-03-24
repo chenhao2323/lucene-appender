@@ -1,8 +1,9 @@
-package log;
+package com.cc.llogger.log;
 
 import ch.qos.logback.classic.ClassicConstants;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.encoder.Encoder;
+import com.cc.llogger.helper.analyzer.StopCharAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.core.StopAnalyzer;
@@ -11,18 +12,19 @@ import org.apache.lucene.document.*;
 import org.apache.lucene.index.DocValuesType;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriterConfig;
-import lucene.analyzer.TStopAnalyzer;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
 
-public class ClassicLuceneAppder extends  LunceneAppenderBase<ILoggingEvent>{
+public class ClassicLuceneAppder extends LunceneAppenderBase {
 
     private Encoder<ILoggingEvent> encoder;
 
     private Charset charset;
+
+    private int maxContentSize = -1;
 
     private static final FieldType DOC_TYPE = new FieldType();
     private static final FieldType TIME_STAMP = new FieldType();
@@ -35,40 +37,48 @@ public class ClassicLuceneAppder extends  LunceneAppenderBase<ILoggingEvent>{
         TIME_STAMP.setTokenized(false);
         TIME_STAMP.setDocValuesType(DocValuesType.NUMERIC);
         TIME_STAMP.setIndexOptions(IndexOptions.DOCS);
-        DOC_TYPE.setOmitNorms(true);
+        TIME_STAMP.setOmitNorms(true);
     }
 
     @Override
     protected Document buildDocument(ILoggingEvent eventObject) {
 
+        byte[] bytes = encoder.encode(eventObject);
+        String content = charset != null ? new String(bytes,charset) : new String(bytes);
+
+        if(maxContentSize > -1 && content.length() > maxContentSize){
+            return null;
+        }
+
         Document doc = new Document();
         String requestUri = eventObject.getMDCPropertyMap().get(ClassicConstants.REQUEST_REQUEST_URI);
         if(requestUri != null && !"".equals(requestUri)){
-            doc.add(new StringField("requestUri",requestUri, Field.Store.NO));
+            doc.add(new Field("requestUri",requestUri, DOC_TYPE));
         }
         doc.add(new IndexdDocNumField("timeStamp",eventObject.getTimeStamp()));
         doc.add(new StringField("level",eventObject.getLevel().levelStr.toLowerCase(), Field.Store.NO));
 
-        doc.add(new Field("logger",eventObject.getLoggerName().toLowerCase(),DOC_TYPE));
-
-        byte[] bytes = encoder.encode(eventObject);
-        String content = charset != null ? new String(bytes,charset) : new String(bytes);
-
-        doc.add(new Field("message",eventObject.getFormattedMessage(),DOC_TYPE));
+        doc.add(new Field("log",defaultIfnull(eventObject.getLoggerName()).toLowerCase(),DOC_TYPE));
+        doc.add(new Field("message", defaultIfnull(eventObject.getFormattedMessage()),DOC_TYPE));
         
-        doc.add(new Field("content",content,DOC_TYPE));
-        doc.add(new StoredField("content",content));
+        doc.add(new Field("content",defaultIfnull(content),DOC_TYPE));
+        doc.add(new StoredField("content",defaultIfnull(content)));
 
         return doc;
     }
 
+    private String defaultIfnull(String s){
+        if(s == null){
+            return "null";
+        }
+        return s;
+    }
     @Override
     protected IndexWriterConfig buildWriterConfig() {
         Analyzer stopAnalyzer;
-        try {
-            InputStream  in = ClassicLuceneAppder.class.getResourceAsStream("/StopWord.txt");
+        try (InputStream  in = ClassicLuceneAppder.class.getResourceAsStream("/StopWord.txt")){
             Reader stopWords = new InputStreamReader(in);
-            stopAnalyzer = new TStopAnalyzer(stopWords);
+            stopAnalyzer = new StopCharAnalyzer(stopWords);
         } catch (Exception e) {
             stopAnalyzer = new StopAnalyzer((CharArraySet)null);
         }
@@ -81,6 +91,10 @@ public class ClassicLuceneAppder extends  LunceneAppenderBase<ILoggingEvent>{
 
     public void setCharset(Charset charset) {
         this.charset = charset;
+    }
+
+    public void setMaxContentSize(int maxSize) {
+        this.maxContentSize = maxSize;
     }
 
     class IndexdDocNumField extends Field {

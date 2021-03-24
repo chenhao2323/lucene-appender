@@ -1,4 +1,4 @@
-package lucene.analyzer;
+package com.cc.llogger.helper.analyzer;
 
 import org.apache.lucene.analysis.util.CharTokenizer;
 import org.apache.lucene.util.IOUtils;
@@ -16,11 +16,11 @@ import java.util.Set;
  * @version 1.0
  * @date 2021-3-3 17:20
  */
-public class CustomCharTokenizer extends CharTokenizer {
+public class StopCharTokenizer extends CharTokenizer {
 
     private Set<Character> stopChars = new HashSet<>();
 
-    public CustomCharTokenizer(Reader stopChars) {
+    public StopCharTokenizer(Reader stopChars) {
         super();
         try {
             setWordSet(stopChars);
@@ -37,7 +37,6 @@ public class CustomCharTokenizer extends CharTokenizer {
     private   void setWordSet(Reader reader) throws IOException {
         BufferedReader br = null;
         try {
-            StringBuilder sb = new StringBuilder();
             br = getBufferedReader(reader);
             char[] buf = new char[16];
             int i = -1;

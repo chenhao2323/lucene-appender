@@ -1,31 +1,31 @@
-package lucene.search;
+package com.cc.llogger.searchExample;
 
 import org.apache.lucene.search.Query;
 
 import java.util.List;
 
 /**
- * SearchResult: ${description}
+ * DefaultSearchResult: ${description}
  *
  * @author chenhao
  * @version 1.0
  * @date 2021-2-26 15:35
  */
-public class SearchResult {
+public class DefaultSearchResult {
 
-    private List docs;
+    private List<String> docs;
 
     private long total;
 
     private Query query;
 
-    public SearchResult(List docs,long total , Query query){
+    public DefaultSearchResult(List<String> docs,long total , Query query){
         this.docs = docs;
         this.total = total;
         this.query = query;
     }
 
-    public List getDocs(){
+    public List<String> getDocs(){
         return docs;
     }
 

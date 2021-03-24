@@ -1,4 +1,4 @@
-package lucene.helper;
+package com.cc.llogger.helper;
 
 import ch.qos.logback.classic.ClassicConstants;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -12,7 +12,7 @@ import ch.qos.logback.core.spi.FilterReply;
  * @version 1.0
  * @date 2021-3-2 16:09
  */
-public class LogSearchFilter extends Filter<ILoggingEvent> {
+public class IgnoreUrlFilter extends Filter<ILoggingEvent> {
 
     private String url = "";
     @Override

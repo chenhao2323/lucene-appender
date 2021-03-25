@@ -27,12 +27,18 @@ public class ClassicLuceneAppder extends LunceneAppenderBase {
     private int maxContentSize = -1;
 
     private static final FieldType DOC_TYPE = new FieldType();
+    private static final FieldType CONTENT_TYPE = new FieldType();
     private static final FieldType TIME_STAMP = new FieldType();
 
     static {
         DOC_TYPE.setTokenized(true);
         DOC_TYPE.setIndexOptions(IndexOptions.DOCS);
         DOC_TYPE.setOmitNorms(true);
+
+        CONTENT_TYPE.setTokenized(true);
+        CONTENT_TYPE.setIndexOptions(IndexOptions.DOCS);
+        CONTENT_TYPE.setOmitNorms(true);
+        CONTENT_TYPE.setStored(true);
 
         TIME_STAMP.setTokenized(false);
         TIME_STAMP.setDocValuesType(DocValuesType.NUMERIC);
@@ -61,8 +67,7 @@ public class ClassicLuceneAppder extends LunceneAppenderBase {
         doc.add(new Field("log",defaultIfnull(eventObject.getLoggerName()).toLowerCase(),DOC_TYPE));
         doc.add(new Field("message", defaultIfnull(eventObject.getFormattedMessage()),DOC_TYPE));
         
-        doc.add(new Field("content",defaultIfnull(content),DOC_TYPE));
-        doc.add(new StoredField("content",defaultIfnull(content)));
+        doc.add(new Field("content",defaultIfnull(content),CONTENT_TYPE));
 
         return doc;
     }

@@ -29,17 +29,25 @@ public class SearchHelper {
         if(writerFactory == null){
             return null;
         }
+        ensureNewWriter();
+        return manager.acquire();
+    }
+
+    public static void refreshSearcher() throws IOException {
+        if (manager != null) {
+            try {
+                manager.maybeRefresh();
+            } catch (RuntimeException e) {
+
+            }
+        }
+    }
+
+    private static void ensureNewWriter() throws IOException{
         IndexWriter newWriter = writerFactory.getWriter();
         if(currentWriter == null || !currentWriter.equals(newWriter) || manager == null){
             currentWriter = newWriter;
             manager = new SearcherManager(currentWriter,null);
-        }
-        return manager.acquire();
-    }
-
-    public static void refreshSearcher() throws IOException{
-        if(manager != null){
-            manager.maybeRefresh();
         }
     }
 

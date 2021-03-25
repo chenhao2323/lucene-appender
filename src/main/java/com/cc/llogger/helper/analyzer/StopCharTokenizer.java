@@ -1,12 +1,7 @@
 package com.cc.llogger.helper.analyzer;
 
 import org.apache.lucene.analysis.util.CharTokenizer;
-import org.apache.lucene.util.IOUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -18,15 +13,10 @@ import java.util.Set;
  */
 public class StopCharTokenizer extends CharTokenizer {
 
-    private Set<Character> stopChars = new HashSet<>();
+    private Set<Character> stopChars;
 
-    public StopCharTokenizer(Reader stopChars) {
-        super();
-        try {
-            setWordSet(stopChars);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public StopCharTokenizer(Set<Character> stopChars) {
+        this.stopChars = stopChars;
     }
 
     @Override
@@ -34,26 +24,5 @@ public class StopCharTokenizer extends CharTokenizer {
         return !stopChars.contains((char)c);
     }
 
-    private   void setWordSet(Reader reader) throws IOException {
-        BufferedReader br = null;
-        try {
-            br = getBufferedReader(reader);
-            char[] buf = new char[16];
-            int i = -1;
-            while( (i = br.read(buf)) != -1){
-                for(int f =0;f < i;f++){
-                    stopChars.add(buf[f]);
-                }
-            }
-        }
-        finally {
-            IOUtils.close(br);
-        }
-    }
-
-    private BufferedReader getBufferedReader(Reader reader) {
-        return (reader instanceof BufferedReader) ? (BufferedReader) reader
-            : new BufferedReader(reader);
-    }
 
 }

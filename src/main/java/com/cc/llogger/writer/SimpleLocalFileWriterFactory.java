@@ -21,6 +21,6 @@ public class SimpleLocalFileWriterFactory extends CachedWriterFactoryBase {
 
     @Override
     protected boolean needUpdate(IndexWriter oldWriter) {
-        return false;
+        return  !oldWriter.isOpen();
     }
 }

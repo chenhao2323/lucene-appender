@@ -24,12 +24,14 @@ public abstract class CachedWriterFactoryBase implements WriterFactory{
 
     private final Object initLock = new Object();
 
+
     @Override
     public void configure(String indexUri,IndexWriterConfig writerConfig){
         this.indexUri = indexUri;
         this.writerConfig = writerConfig;
         configured = true;
     }
+
     @Override
     public IndexWriter getWriter() throws IOException {
         if(!configured){

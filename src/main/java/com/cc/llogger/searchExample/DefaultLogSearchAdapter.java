@@ -5,9 +5,11 @@ import com.cc.llogger.helper.analyzer.StopCharAnalyzer;
 import com.cc.llogger.log.ClassicLuceneAppder;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.core.StopAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
@@ -36,6 +38,7 @@ public class DefaultLogSearchAdapter {
             Reader stopWords = new InputStreamReader(in);
             t = new StopCharAnalyzer(stopWords);
         } catch (Exception e) {
+            e.printStackTrace();
             t = new StopAnalyzer((CharArraySet)null);
         }
         hightLightAnalyzer = t;
@@ -50,8 +53,6 @@ public class DefaultLogSearchAdapter {
         queryParser.setDefaultOperator(StandardQueryConfigHandler.Operator.AND);
 
     }
-
-
 
     public DefaultSearchResult doSearch(String query, int perpage,boolean reverse) throws IOException {
         SearchHelper.refreshSearcher();
